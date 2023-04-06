@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+<<<<<<< HEAD
 import 'package:tutor_match_new/login_signup_auth/screens/signup2/student_signup.dart';
 import 'customebutton.dart';
 import 'customimageview.dart';
+=======
+import 'package:tutor_match_new/login_signup_auth/screens/login/login_screen.dart';
+import 'customebutton.dart';
+import 'customimageview.dart';
+// import 'package:offers/utils/appstyle.dart';
+// import 'package:offers/utils/colorconstant.dart';
+// import 'package:offers/widgets/customiconbutton.dart';
+// import 'package:offers/widgets/customimageview.dart';
+>>>>>>> 59b60b5dd8e279950ee50c3a519f13331e8bd585
 
 class Usertype_Selection extends StatefulWidget {
   const Usertype_Selection({super.key});
@@ -63,7 +73,11 @@ class _Usertype_SelectionState extends State<Usertype_Selection> {
                               tutorselected = false;
                             });
                             // Get.toNamed("/userlogin");
+<<<<<<< HEAD
                             Navigator.push(context, MaterialPageRoute(builder: (context) => StudentSignup()));
+=======
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+>>>>>>> 59b60b5dd8e279950ee50c3a519f13331e8bd585
                           },
                           child: Container(
                               margin: const EdgeInsets.only(right: 7),

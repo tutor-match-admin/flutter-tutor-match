@@ -31,7 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
   intro_slider: ^3.0.0
+<<<<<<< HEAD
   video_player: ^2.2.19
+=======
+>>>>>>> 59b60b5dd8e279950ee50c3a519f13331e8bd585
 #  smooth_page_indicator: ^1.0.0
 
 
@@ -42,7 +45,11 @@ dependencies:
   get: ^4.6.5
   cached_network_image: ^3.2.3
   flutter_svg: ^2.0.4
+<<<<<<< HEAD
   google_fonts: ^2.3.1
+=======
+
+>>>>>>> 59b60b5dd8e279950ee50c3a519f13331e8bd585
 
 dev_dependencies:
   flutter_test:
@@ -69,9 +76,15 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+<<<<<<< HEAD
     - assets/icons/
     - assets/images/
     - assets/svgs/
+=======
+    - assets/images/
+    - assets/svgs/
+    - assets/icons/
+>>>>>>> 59b60b5dd8e279950ee50c3a519f13331e8bd585
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
