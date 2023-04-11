@@ -26,7 +26,7 @@ class _StudentSignupState extends State<TutorSignup> {
   final TextEditingController _organizationController = TextEditingController();
 
   Future<void> signupUser() async {
-    var url = Uri.parse('${Api_const.auth}/user/signup');
+    var url = Uri.parse('${Api_const.auth}/teacher/signup');
 
     var response = await http.post(url, body: {
       'name': _nameController.text.trim(),

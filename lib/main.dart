@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-
-import 'login_signup_auth/screens/signup2/student_signup.dart';
-
-
+import 'package:tutor_match/login_signup_auth/screens/login2/all_login.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +21,7 @@ class MyApp extends StatelessWidget {
     return const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       // home: OnbordingScreen(),
-      home: StudentSignup(),
+      home: Login(),
     );
   }
 }
