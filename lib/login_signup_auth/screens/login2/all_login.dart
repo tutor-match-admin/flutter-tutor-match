@@ -1,6 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../api_services/Api_const.dart';
+import '../../../utils/Sharedpref_serv.dart';
+import '../STUDENT SCREEN/student_home.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -12,83 +20,107 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  bool _visiblePassword = false;
+  Future<void> loginUser() async {
+    var url = Uri.parse('http://${Api_const.host}:8090/login');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'email': emailController.text,
+          'password': passController.text,
+        }));
+
+    if (response.statusCode == 200) {
+      print(response.body);
+      var fullbody = json.decode(response.body);
+      Map<String, dynamic> usermap = fullbody['userdetails'];
+      String usertype = fullbody['user'];
+
+      // if (usertype == "user") {
+      String id = fullbody['uid'];
+      Sharedpref_Serv.saveid(id, "student");
+      Get.offAll(() => const Student_home());
+      // } else {
+      //   String id = fullbody['tid'];
+      //   Sharedpref_Serv.saveid(id, "tutor");
+      //   // Get.to(() => const Tutor_home());
+      //   Get.offAll(() => const Tutor_home());
+      // }
+    } else {
+      Get.snackbar("Alert", "Wrong Credentials ${response.statusCode}",
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color(0xFF21899C),
-      body: SafeArea(
-        child: SizedBox(
-          height: size.height,
-          child: Stack(
-            children: <Widget>[
-              //left side background design. I use a svg image here
-              Positioned(
-                left: -34,
-                top: 181.0,
-                child: SvgPicture.string(
-                  // Group 3178
-                  '<svg viewBox="-34.0 181.0 99.0 99.0" ><path transform="translate(-34.0, 181.0)" d="M 74.25 0 L 99 49.5 L 74.25 99 L 24.74999618530273 99 L 0 49.49999618530273 L 24.7500057220459 0 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(-26.57, 206.25)" d="M 0 0 L 42.07500076293945 16.82999992370605 L 84.15000152587891 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(15.5, 223.07)" d="M 0 56.42999649047852 L 0 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                  width: 99.0,
-                  height: 99.0,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: SizedBox(
+            height: size.height,
+            child: Stack(
+              children: <Widget>[
+                //left side background design. I use a svg image here
+                Positioned(
+                  left: -34,
+                  top: 181.0,
+                  child: SvgPicture.string(
+                    // Group 3178
+                    '<svg viewBox="-34.0 181.0 99.0 99.0" ><path transform="translate(-34.0, 181.0)" d="M 74.25 0 L 99 49.5 L 74.25 99 L 24.74999618530273 99 L 0 49.49999618530273 L 24.7500057220459 0 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(-26.57, 206.25)" d="M 0 0 L 42.07500076293945 16.82999992370605 L 84.15000152587891 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(15.5, 223.07)" d="M 0 56.42999649047852 L 0 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                    width: 99.0,
+                    height: 99.0,
+                  ),
                 ),
-              ),
 
-              //right side background design. I use a svg image here
-              Positioned(
-                right: -52,
-                top: 45.0,
-                child: SvgPicture.string(
-                  // Group 3177
-                  '<svg viewBox="288.0 45.0 139.0 139.0" ><path transform="translate(288.0, 45.0)" d="M 104.25 0 L 139 69.5 L 104.25 139 L 34.74999618530273 139 L 0 69.5 L 34.75000762939453 0 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(298.42, 80.45)" d="M 0 0 L 59.07500076293945 23.63000106811523 L 118.1500015258789 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(357.5, 104.07)" d="M 0 79.22999572753906 L 0 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
-                  width: 139.0,
-                  height: 139.0,
+                //right side background design. I use a svg image here
+                Positioned(
+                  right: -52,
+                  top: 45.0,
+                  child: SvgPicture.string(
+                    // Group 3177
+                    '<svg viewBox="288.0 45.0 139.0 139.0" ><path transform="translate(288.0, 45.0)" d="M 104.25 0 L 139 69.5 L 104.25 139 L 34.74999618530273 139 L 0 69.5 L 34.75000762939453 0 Z" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(298.42, 80.45)" d="M 0 0 L 59.07500076293945 23.63000106811523 L 118.1500015258789 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /><path transform="translate(357.5, 104.07)" d="M 0 79.22999572753906 L 0 0" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.25" stroke-miterlimit="4" stroke-linecap="butt" /></svg>',
+                    width: 139.0,
+                    height: 139.0,
+                  ),
                 ),
-              ),
 
-              //content ui
-              Positioned(
-                top: 8.0,
-                child: SizedBox(
-                  width: size.width,
-                  height: size.height,
-                  child: Padding(
-                    padding:
-                    EdgeInsets.symmetric(horizontal: size.width * 0.06),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        //logo section
-                        Expanded(
-                          flex: 3,
-                          child: Column(
+                //content ui
+                Positioned(
+                  top: 8.0,
+                  child: SizedBox(
+                    width: size.width,
+                    height: size.height,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: size.width * 0.06),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          //logo section
+                          Column(
                             children: [
-                              logo(size.height / 8, size.height / 4),
+                              // logo(size.height / 8, size.height / 4),
                               const SizedBox(
                                 height: 16,
                               ),
                               richText(23.12),
                             ],
                           ),
-                        ),
 
-                        //continue with email for sign in app text
-                        Expanded(
-                          flex: 1,
-                          child: Text(
+                          //continue with email for sign in app text
+                          Text(
                             'Continue with email for sign in App',
                             style: GoogleFonts.inter(
                               fontSize: 14.0,
                               color: Colors.white,
                             ),
                           ),
-                        ),
 
-                        //email and password TextField here
-                        Expanded(
-                          flex: 4,
-                          child: Column(
+                          //email and password TextField here
+                          Column(
                             children: [
                               emailTextField(size),
                               const SizedBox(
@@ -98,45 +130,39 @@ class _LoginState extends State<Login> {
                               const SizedBox(
                                 height: 16,
                               ),
-                              buildRemember(size),
+                              // buildRemember(size),
                             ],
                           ),
-                        ),
 
-                        //sign in button & continue with text here
-                        Expanded(
-                          flex: 2,
-                          child: Column(
+                          //sign in button & continue with text here
+                          Column(
                             children: [
                               signInButton(size),
                               const SizedBox(
                                 height: 16,
                               ),
-                              buildContinueText(),
+                              // buildContinueText(),
                             ],
                           ),
-                        ),
 
-                        //footer section. google, facebook button and sign up text here
-                        Expanded(
-                          flex: 4,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              signInGoogleFacebookButton(size),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              buildFooter(size),
-                            ],
-                          ),
-                        ),
-                      ],
+                          //footer section. google, facebook button and sign up text here
+                          // Column(
+                          //   mainAxisAlignment: MainAxisAlignment.center,
+                          //   children: [
+                          //     signInGoogleFacebookButton(size),
+                          //     const SizedBox(
+                          //       height: 16,
+                          //     ),
+                          //     buildFooter(size),
+                          //   ],
+                          // ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -221,6 +247,7 @@ class _LoginState extends State<Login> {
             //email address textField
             Expanded(
               child: TextField(
+                controller: emailController,
                 maxLines: 1,
                 cursorColor: Colors.white70,
                 keyboardType: TextInputType.emailAddress,
@@ -280,10 +307,11 @@ class _LoginState extends State<Login> {
             //password textField
             Expanded(
               child: TextField(
+                controller: passController,
                 maxLines: 1,
                 cursorColor: Colors.white70,
                 keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
+                obscureText: !_visiblePassword,
                 style: GoogleFonts.inter(
                   fontSize: 14.0,
                   color: Colors.white,
@@ -296,9 +324,21 @@ class _LoginState extends State<Login> {
                       color: Colors.white70,
                       fontWeight: FontWeight.w500,
                     ),
-                    suffixIcon: const Icon(
-                      Icons.visibility,
-                      color: Colors.white70,
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _visiblePassword = !_visiblePassword;
+                        });
+                      },
+                      child: _visiblePassword
+                          ? const Icon(
+                              Icons.visibility,
+                              color: Colors.white70,
+                            )
+                          : const Icon(
+                              Icons.visibility_off,
+                              color: Colors.white70,
+                            ),
                     ),
                     border: InputBorder.none),
               ),
@@ -349,19 +389,24 @@ class _LoginState extends State<Login> {
   }
 
   Widget signInButton(Size size) {
-    return Container(
-      alignment: Alignment.center,
-      height: size.height / 13,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: const Color(0xFFF56B3F),
-      ),
-      child: Text(
-        'Sign in',
-        style: GoogleFonts.inter(
-          fontSize: 16.0,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
+    return InkWell(
+      onTap: () async {
+        await loginUser();
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: size.height / 13,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: const Color(0xFFF56B3F),
+        ),
+        child: Text(
+          'Sign in',
+          style: GoogleFonts.inter(
+            fontSize: 16.0,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
@@ -374,8 +419,8 @@ class _LoginState extends State<Login> {
       children: <Widget>[
         const Expanded(
             child: Divider(
-              color: Colors.white,
-            )),
+          color: Colors.white,
+        )),
         Expanded(
           child: Text(
             'Or Continue with',
@@ -388,8 +433,8 @@ class _LoginState extends State<Login> {
         ),
         const Expanded(
             child: Divider(
-              color: Colors.white,
-            )),
+          color: Colors.white,
+        )),
       ],
     );
   }
