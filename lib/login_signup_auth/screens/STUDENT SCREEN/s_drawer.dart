@@ -9,7 +9,7 @@ import '../../../utils/Sharedpref_serv.dart';
 
 class S_drawer extends StatefulWidget {
   Student student;
-   S_drawer({required this.student,super.key});
+  S_drawer({required this.student, super.key});
 
   @override
   State<S_drawer> createState() => _S_drawerState();
@@ -18,7 +18,7 @@ class S_drawer extends StatefulWidget {
 class _S_drawerState extends State<S_drawer> {
   Future<void> cleardata() async {
     Sharedpref_Serv.clearAllData();
-    Get.to(() => Login());
+    Get.to(() => const Login());
   }
 
   @override
@@ -53,16 +53,6 @@ class _S_drawerState extends State<S_drawer> {
                   children: [
                     ListTile(
                       leading: IconButton(
-                        icon: const Icon(Icons.document_scanner,
-                            color: Colors.white),
-                        onPressed: () => null,
-                      ),
-                      title: const Text('Case History',
-                          style: TextStyle(color: Colors.white)),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      leading: IconButton(
                         icon:
                             const Icon(Icons.contact_mail, color: Colors.white),
                         onPressed: () => null,
@@ -94,7 +84,6 @@ class _S_drawerState extends State<S_drawer> {
                         style: TextStyle(color: Colors.white),
                       ),
                       onTap: () async {
-                       
                         Get.defaultDialog(
                             title: "logout!!!",
                             titleStyle: const TextStyle(fontSize: 18.0),

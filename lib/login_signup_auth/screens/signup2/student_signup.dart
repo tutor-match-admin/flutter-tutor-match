@@ -25,25 +25,36 @@ class _StudentSignupState extends State<StudentSignup> {
   final TextEditingController _pincodeController = TextEditingController();
 
   Future<void> signupUser() async {
-    var url = Uri.parse('${Api_const.auth}/user/signup');
+    // var url = Uri.parse('${Api_const.auth}/user/signup');
+    // var response = await http.post(url, body: {
+    //   'name': _nameController.text.trim(),
+    //   'email': _emailController.text.trim(),
+    //   'password': _passwordController.text.trim(),
+    //   'phone': _phoneController.text.trim(),
+    //   'pincode': _pincodeController.text.trim(),
+    // });
+    var url = Uri.parse('http://${Api_const.host}:8090/signup');
 
-    var response = await http.post(url, body: {
-      'name': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'password': _passwordController.text.trim(),
-      'phone': _phoneController.text.trim(),
-      'pincode': _pincodeController.text.trim(),
-    });
-
+    var response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        'name': _nameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'password': _passwordController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'pincode': _pincodeController.text.trim(),
+      }),
+    );
     if (response.statusCode == 200) {
       var fullbody = json.decode(response.body);
       Map<String, dynamic> usermap = fullbody['userdetails'];
 
-      String id = fullbody['uid'];
+      String id = fullbody['uid'].toString();
       Sharedpref_Serv.saveid(id, "student");
       Get.offAll(() => const Student_home());
     } else {
-      Get.snackbar("Check again", "User already exists",
+      Get.snackbar("Check again", "User already exists ${response.statusCode}",
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
     }
   }

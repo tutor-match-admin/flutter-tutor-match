@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
               } else if (snapshot.data == 2) {
                 return const Student_home();
               } else {
-                return const TutorSignup();
+                return const StudentSignup();
               }
             } else {
               return const Scaffold(
