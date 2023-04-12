@@ -651,8 +651,8 @@ class _StudentSignupState extends State<TutorSignup> {
 
   Widget signInButton(Size size) {
     return InkWell(
-      onTap: () {
-        signupUser();
+      onTap: () async {
+        await signupUser();
       },
       child: Container(
         alignment: Alignment.center,
