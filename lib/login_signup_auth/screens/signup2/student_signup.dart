@@ -9,6 +9,7 @@ import 'package:tutor_match/login_signup_auth/screens/STUDENT%20SCREEN/student_h
 
 import '../../../api_services/Api_const.dart';
 import '../../../utils/Sharedpref_serv.dart';
+import '../login2/all_login.dart';
 
 class StudentSignup extends StatefulWidget {
   const StudentSignup({Key? key}) : super(key: key);
@@ -23,7 +24,8 @@ class _StudentSignupState extends State<StudentSignup> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _pincodeController = TextEditingController();
-
+  bool isbuttonloading = false;
+  bool _visiblePassword = false;
   Future<void> signupUser() async {
     // var url = Uri.parse('${Api_const.auth}/user/signup');
     // var response = await http.post(url, body: {
@@ -52,8 +54,12 @@ class _StudentSignupState extends State<StudentSignup> {
 
       String id = fullbody['uid'].toString();
       Sharedpref_Serv.saveid(id, "student");
+
       Get.offAll(() => const Student_home());
     } else {
+      setState(() {
+        isbuttonloading = false;
+      });
       Get.snackbar("Check again", "User already exists ${response.statusCode}",
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
     }
@@ -109,7 +115,7 @@ class _StudentSignupState extends State<StudentSignup> {
                           //logo section
                           Column(
                             children: [
-                              logo(size.height / 8, size.height / 4),
+                              // logo(size.height / 8, size.height / 4),
                               const SizedBox(
                                 height: 16,
                               ),
@@ -161,7 +167,7 @@ class _StudentSignupState extends State<StudentSignup> {
                               const SizedBox(
                                 height: 16,
                               ),
-                              // buildContinueText(),
+                              buildContinueText(),
                             ],
                           ),
 
@@ -566,10 +572,11 @@ class _StudentSignupState extends State<StudentSignup> {
             //password textField
             Expanded(
               child: TextField(
+                controller: _passwordController,
                 maxLines: 1,
                 cursorColor: Colors.white70,
                 keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
+                obscureText: !_visiblePassword,
                 style: GoogleFonts.inter(
                   fontSize: 14.0,
                   color: Colors.white,
@@ -582,9 +589,21 @@ class _StudentSignupState extends State<StudentSignup> {
                       color: Colors.white70,
                       fontWeight: FontWeight.w500,
                     ),
-                    suffixIcon: const Icon(
-                      Icons.visibility,
-                      color: Colors.white70,
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _visiblePassword = !_visiblePassword;
+                        });
+                      },
+                      child: _visiblePassword
+                          ? const Icon(
+                              Icons.visibility,
+                              color: Colors.white70,
+                            )
+                          : const Icon(
+                              Icons.visibility_off,
+                              color: Colors.white70,
+                            ),
                     ),
                     border: InputBorder.none),
               ),
@@ -635,27 +654,32 @@ class _StudentSignupState extends State<StudentSignup> {
   }
 
   Widget signInButton(Size size) {
-    return InkWell(
-      onTap: () {
-        signupUser();
-      },
-      child: Container(
-        alignment: Alignment.center,
-        height: size.height / 13,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
-          color: const Color(0xFFF56B3F),
-        ),
-        child: Text(
-          'Sign in',
-          style: GoogleFonts.inter(
-            fontSize: 16.0,
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
+    return isbuttonloading
+        ? const CircularProgressIndicator()
+        : InkWell(
+            onTap: () {
+              setState(() {
+                isbuttonloading = true;
+              });
+              signupUser();
+            },
+            child: Container(
+              alignment: Alignment.center,
+              height: size.height / 13,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: const Color(0xFFF56B3F),
+              ),
+              child: Text(
+                'Sign in',
+                style: GoogleFonts.inter(
+                  fontSize: 16.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          );
   }
 
   Widget buildContinueText() {
@@ -663,24 +687,42 @@ class _StudentSignupState extends State<StudentSignup> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        const Expanded(
-            child: Divider(
-          color: Colors.white,
-        )),
-        Expanded(
+        // const Expanded(
+        //     child: Divider(
+        //   color: Colors.white,
+        // )),
+        Text(
+          'Already have an account?',
+          style: GoogleFonts.inter(
+            fontSize: 14.0,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.start,
+        ),
+        const SizedBox(
+          width: 4,
+        ),
+        InkWell(
+          onTap: () {
+            Get.to(() => const Login());
+          },
           child: Text(
-            'Or Continue with',
+            'Login',
             style: GoogleFonts.inter(
-              fontSize: 12.0,
+              fontSize: 24,
               color: Colors.white,
+              fontWeight: FontWeight.w600,
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.end,
           ),
         ),
-        const Expanded(
-            child: Divider(
-          color: Colors.white,
-        )),
+        const SizedBox(
+          width: 24,
+        )
+        // const Expanded(
+        //     child: Divider(
+        //   color: Colors.white,
+        // )),
       ],
     );
   }

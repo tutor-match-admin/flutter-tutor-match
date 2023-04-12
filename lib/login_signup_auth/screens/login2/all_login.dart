@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import '../../../api_services/Api_const.dart';
 import '../../../utils/Sharedpref_serv.dart';
 import '../STUDENT SCREEN/student_home.dart';
-import '../TUTOR SCREEN/tutor_home.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -21,13 +20,15 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
-
+  bool _visiblePassword = false;
   Future<void> loginUser() async {
-    var url = Uri.parse('${Api_const.auth}/login');
-    var response = await http.post(url, body: {
-      'email': emailController.text,
-      'password': passController.text,
-    });
+    var url = Uri.parse('http://${Api_const.host}:8090/login');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'email': emailController.text,
+          'password': passController.text,
+        }));
 
     if (response.statusCode == 200) {
       print(response.body);
@@ -35,18 +36,18 @@ class _LoginState extends State<Login> {
       Map<String, dynamic> usermap = fullbody['userdetails'];
       String usertype = fullbody['user'];
 
-      if (usertype == "user") {
-        String id = fullbody['uid'];
-        Sharedpref_Serv.saveid(id, "student");
-        Get.offAll(() => const Student_home());
-      } else {
-        String id = fullbody['tid'];
-        Sharedpref_Serv.saveid(id, "tutor");
-        // Get.to(() => const Tutor_home());
-        Get.offAll(() => const Tutor_home());
-      }
+      // if (usertype == "user") {
+      String id = fullbody['uid'];
+      Sharedpref_Serv.saveid(id, "student");
+      Get.offAll(() => const Student_home());
+      // } else {
+      //   String id = fullbody['tid'];
+      //   Sharedpref_Serv.saveid(id, "tutor");
+      //   // Get.to(() => const Tutor_home());
+      //   Get.offAll(() => const Tutor_home());
+      // }
     } else {
-      Get.snackbar("Alert", "Wrong Credentials",
+      Get.snackbar("Alert", "Wrong Credentials ${response.statusCode}",
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
     }
   }
@@ -310,7 +311,7 @@ class _LoginState extends State<Login> {
                 maxLines: 1,
                 cursorColor: Colors.white70,
                 keyboardType: TextInputType.visiblePassword,
-                obscureText: true,
+                obscureText: !_visiblePassword,
                 style: GoogleFonts.inter(
                   fontSize: 14.0,
                   color: Colors.white,
@@ -323,9 +324,21 @@ class _LoginState extends State<Login> {
                       color: Colors.white70,
                       fontWeight: FontWeight.w500,
                     ),
-                    suffixIcon: const Icon(
-                      Icons.visibility,
-                      color: Colors.white70,
+                    suffixIcon: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _visiblePassword = !_visiblePassword;
+                        });
+                      },
+                      child: _visiblePassword
+                          ? const Icon(
+                              Icons.visibility,
+                              color: Colors.white70,
+                            )
+                          : const Icon(
+                              Icons.visibility_off,
+                              color: Colors.white70,
+                            ),
                     ),
                     border: InputBorder.none),
               ),

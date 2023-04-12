@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
-import 'package:tutor_match/login_signup_auth/screens/login2/all_login.dart';
+import 'package:tutor_match/login_signup_auth/screens/signup2/student_signup.dart';
 import 'package:tutor_match/utils/Models/student.dart';
 
 import '../../../utils/Sharedpref_serv.dart';
@@ -18,13 +16,13 @@ class S_drawer extends StatefulWidget {
 class _S_drawerState extends State<S_drawer> {
   Future<void> cleardata() async {
     Sharedpref_Serv.clearAllData();
-    Get.to(() => const Login());
+    Get.offAll(() => const StudentSignup());
   }
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Colors.orange,
+      backgroundColor: const Color(0xff457b9d),
       child: Column(
         // padding: EdgeInsets.zero,
         children: <Widget>[
@@ -46,7 +44,7 @@ class _S_drawerState extends State<S_drawer> {
                   accountName: Text(widget.student.email),
                   accountEmail: Text(widget.student.name),
                   decoration: const BoxDecoration(
-                    color: Colors.orange,
+                    color: Color(0xffa8dadc),
                   ),
                 ),
                 Column(
