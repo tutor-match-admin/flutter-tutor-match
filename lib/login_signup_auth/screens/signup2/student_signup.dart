@@ -5,8 +5,10 @@ import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:tutor_match/login_signup_auth/screens/STUDENT%20SCREEN/student_home.dart';
 
 import '../../../api_services/Api_const.dart';
+import '../../../utils/Sharedpref_serv.dart';
 
 class StudentSignup extends StatefulWidget {
   const StudentSignup({Key? key}) : super(key: key);
@@ -36,9 +38,10 @@ class _StudentSignupState extends State<StudentSignup> {
     if (response.statusCode == 200) {
       var fullbody = json.decode(response.body);
       Map<String, dynamic> usermap = fullbody['userdetails'];
-      String id = usermap['_id'];
-      // Sharedprefserv().saveuid(id);
-      // Get.toNamed('/shomepage');
+
+      String id = fullbody['uid'];
+      Sharedpref_Serv.saveid(id, "student");
+      Get.offAll(() => const Student_home());
     } else {
       Get.snackbar("Check again", "User already exists",
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
@@ -443,7 +446,7 @@ class _StudentSignupState extends State<StudentSignup> {
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
-                    hintText: 'Enter your gmail address',
+                    hintText: 'Enter your pincode',
                     hintStyle: GoogleFonts.inter(
                       fontSize: 14.0,
                       color: Colors.white70,
@@ -621,19 +624,24 @@ class _StudentSignupState extends State<StudentSignup> {
   }
 
   Widget signInButton(Size size) {
-    return Container(
-      alignment: Alignment.center,
-      height: size.height / 13,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: const Color(0xFFF56B3F),
-      ),
-      child: Text(
-        'Sign in',
-        style: GoogleFonts.inter(
-          fontSize: 16.0,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
+    return InkWell(
+      onTap: () {
+        signupUser();
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: size.height / 13,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: const Color(0xFFF56B3F),
+        ),
+        child: Text(
+          'Sign in',
+          style: GoogleFonts.inter(
+            fontSize: 16.0,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

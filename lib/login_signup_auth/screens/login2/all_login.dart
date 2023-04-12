@@ -7,6 +7,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../api_services/Api_const.dart';
+import '../../../utils/Sharedpref_serv.dart';
+import '../STUDENT SCREEN/student_home.dart';
+import '../TUTOR SCREEN/tutor_home.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -30,7 +33,18 @@ class _LoginState extends State<Login> {
       print(response.body);
       var fullbody = json.decode(response.body);
       Map<String, dynamic> usermap = fullbody['userdetails'];
-      Get.toNamed('/shomepage');
+      String usertype = fullbody['user'];
+
+      if (usertype == "user") {
+        String id = fullbody['uid'];
+        Sharedpref_Serv.saveid(id, "student");
+        Get.offAll(() => const Student_home());
+      } else {
+        String id = fullbody['tid'];
+        Sharedpref_Serv.saveid(id, "tutor");
+        // Get.to(() => const Tutor_home());
+        Get.offAll(() => const Tutor_home());
+      }
     } else {
       Get.snackbar("Alert", "Wrong Credentials",
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
@@ -87,7 +101,7 @@ class _LoginState extends State<Login> {
                           //logo section
                           Column(
                             children: [
-                              logo(size.height / 8, size.height / 4),
+                              // logo(size.height / 8, size.height / 4),
                               const SizedBox(
                                 height: 16,
                               ),
@@ -362,19 +376,24 @@ class _LoginState extends State<Login> {
   }
 
   Widget signInButton(Size size) {
-    return Container(
-      alignment: Alignment.center,
-      height: size.height / 13,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: const Color(0xFFF56B3F),
-      ),
-      child: Text(
-        'Sign in',
-        style: GoogleFonts.inter(
-          fontSize: 16.0,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
+    return InkWell(
+      onTap: () async {
+        await loginUser();
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: size.height / 13,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: const Color(0xFFF56B3F),
+        ),
+        child: Text(
+          'Sign in',
+          style: GoogleFonts.inter(
+            fontSize: 16.0,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );

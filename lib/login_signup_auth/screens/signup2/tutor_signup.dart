@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:tutor_match/login_signup_auth/screens/TUTOR%20SCREEN/tutor_home.dart';
+import 'package:tutor_match/utils/Sharedpref_serv.dart';
 
 import '../../../api_services/Api_const.dart';
 import 'package:http/http.dart' as http;
@@ -40,9 +42,10 @@ class _StudentSignupState extends State<TutorSignup> {
     if (response.statusCode == 200) {
       var fullbody = json.decode(response.body);
       Map<String, dynamic> usermap = fullbody['userdetails'];
-      String id = usermap['_id'];
-      // Sharedprefserv().saveuid(id);
-      Get.toNamed('/shomepage');
+      String id = fullbody['tid'];
+      Sharedpref_Serv.saveid(id, "tutor");
+
+      Get.offAll(() => const Tutor_home());
     } else {
       Get.snackbar("Check again", "User already exists",
           snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
@@ -647,19 +650,24 @@ class _StudentSignupState extends State<TutorSignup> {
   }
 
   Widget signInButton(Size size) {
-    return Container(
-      alignment: Alignment.center,
-      height: size.height / 13,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: const Color(0xFFF56B3F),
-      ),
-      child: Text(
-        'Sign in',
-        style: GoogleFonts.inter(
-          fontSize: 16.0,
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
+    return InkWell(
+      onTap: () {
+        signupUser();
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: size.height / 13,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: const Color(0xFFF56B3F),
+        ),
+        child: Text(
+          'Sign in',
+          style: GoogleFonts.inter(
+            fontSize: 16.0,
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
