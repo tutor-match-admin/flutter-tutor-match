@@ -27,27 +27,27 @@ class _StudentSignupState extends State<StudentSignup> {
   bool isbuttonloading = false;
   bool _visiblePassword = false;
   Future<void> signupUser() async {
-    // var url = Uri.parse('${Api_const.auth}/user/signup');
-    // var response = await http.post(url, body: {
-    //   'name': _nameController.text.trim(),
-    //   'email': _emailController.text.trim(),
-    //   'password': _passwordController.text.trim(),
-    //   'phone': _phoneController.text.trim(),
-    //   'pincode': _pincodeController.text.trim(),
-    // });
-    var url = Uri.parse('http://${Api_const.host}:8090/signup');
+    var url = Uri.parse('${Api_const.auth}/user/signup');
+    var response = await http.post(url, body: {
+      'name': _nameController.text.trim(),
+      'email': _emailController.text.trim(),
+      'password': _passwordController.text.trim(),
+      'phone': _phoneController.text.trim(),
+      'pincode': _pincodeController.text.trim(),
+    });
+    // var url = Uri.parse('http://${Api_const.host}:8090/signup');
 
-    var response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'password': _passwordController.text.trim(),
-        'phone': _phoneController.text.trim(),
-        'pincode': _pincodeController.text.trim(),
-      }),
-    );
+    // var response = await http.post(
+    //   url,
+    //   headers: {"Content-Type": "application/json"},
+    //   body: jsonEncode({
+    //     'name': _nameController.text.trim(),
+    //     'email': _emailController.text.trim(),
+    //     'password': _passwordController.text.trim(),
+    //     'phone': _phoneController.text.trim(),
+    //     'pincode': _pincodeController.text.trim(),
+    //   }),
+    // );
     if (response.statusCode == 200) {
       var fullbody = json.decode(response.body);
       Map<String, dynamic> usermap = fullbody['userdetails'];

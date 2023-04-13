@@ -102,7 +102,7 @@ class _StudentSignupState extends State<TutorSignup> {
                           //logo section
                           Column(
                             children: [
-                              logo(size.height / 8, size.height / 4),
+                              // logo(size.height / 8, size.height / 4),
                               const SizedBox(
                                 height: 16,
                               ),

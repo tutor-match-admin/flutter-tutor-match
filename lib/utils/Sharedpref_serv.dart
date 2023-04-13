@@ -28,12 +28,35 @@ class Sharedpref_Serv {
     return pin.toString() ?? '';
   }
 
+
+  //set pincode
+  static Future<void> setpincode(String pincode) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('Pincode', pincode);
+  }
+
   static Future<void> saveTutor(Tutor tutor) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('Name', tutor.name);
     prefs.setString('Email', tutor.email);
     prefs.setString('Phone', tutor.phone);
     prefs.setString('Pincode', tutor.pincode);
+    if(tutor.fees == null){
+      prefs.setString('Fees', "");
+    }else{
+      prefs.setString('Fees', tutor.fees!);
+    }
+
+    if(tutor.domain == null){
+      prefs.setString('Domain', "");
+    }else{
+      prefs.setString('Domain', tutor.domain!);
+    }
+    if(tutor.pastexperience == null){
+      prefs.setString('Pastexperience', "");
+    }else{
+      prefs.setString('Pastexperience', tutor.pastexperience!);
+    }
     prefs.setString('saved', "true");
   }
 

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:tutor_match/login_signup_auth/screens/STUDENT%20SCREEN/s_drawer.dart';
 import 'package:tutor_match/utils/Models/tutor.dart';
@@ -27,27 +29,19 @@ class _Student_homeState extends State<Student_home> {
   Future<void> getuserdata() async {
     String savedcheck = await Sharedpref_Serv.checksaved();
     print(savedcheck);
-    // if (savedcheck == "true") {
-    //   return;
-    // }
     String id = await Sharedpref_Serv.getid();
     print(id);
     print(id);
     setState(() {
       uid = id;
     });
+    if (savedcheck == "true") {
+      return;
+    }
 
-    // var url = Uri.parse('${Api_const.auth}/user/getuserdata');
-    // var response = await http.post(url,
-    //  body: {"uid": id});
-    var url = Uri.parse('http://${Api_const.host}:8090/students');
-    var response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({
-        'uid': id,
-      }),
-    );
+    var url = Uri.parse('${Api_const.auth}/user/getuserdata');
+    var response = await http.post(url, body: {"uid": id});
+
     if (response.statusCode == 200) {
       var fullbody = json.decode(response.body);
       Map<String, dynamic> userlist = fullbody['userdetails'];
@@ -70,16 +64,9 @@ class _Student_homeState extends State<Student_home> {
     String pincode = await Sharedpref_Serv.getpincode();
     print(pincode);
     print(pincode);
-    // var url = Uri.parse('${Api_const.controller}/getteacherbylocation');
+    var url = Uri.parse('${Api_const.controller}/getteacherbylocation');
 
-    // var response = await http.post(url, body: {"pincode": pincode});
-
-    var url = Uri.parse('http://${Api_const.host}:8090/getteacherbylocation');
-    var response = await http.post(
-      url,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"pincode": "394101"}),
-    );
+    var response = await http.post(url, body: {"pincode": pincode});
 
     if (response.statusCode == 200) {
       var fullbody = json.decode(response.body);
@@ -112,13 +99,79 @@ class _Student_homeState extends State<Student_home> {
     });
   }
 
+  String? _currentAddress;
+  Position? _currentPosition;
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied.');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied.');
+    }
+
+    return true;
+  }
+
+  Future<void> getCurrentPosition() async {
+    final hasPermission = await _handleLocationPermission();
+
+    if (!hasPermission) return;
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((Position position) async {
+      setState(() {
+        _currentPosition = position;
+      });
+      await placemarkFromCoordinates(
+              _currentPosition!.latitude, _currentPosition!.longitude)
+          .then((List<Placemark> placemarks) async {
+        Placemark place = placemarks[0];
+        String pin = place.postalCode.toString();
+        Sharedpref_Serv.setpincode(pin);
+        await updatepincode(pin).then((value) {
+          setState(() {
+            tutorlist = [];
+          });
+          get_near_tutor();
+        });
+      }, onError: (e) {
+        print(e);
+      });
+    }).catchError((e) {
+      debugPrint(e);
+    });
+  }
+
+  Future<void> updatepincode(String pincode) async {
+    String id = await Sharedpref_Serv.getid();
+    var url = Uri.parse('${Api_const.auth}/user/updateuserlocation');
+
+    var response = await http.post(url, body: {"uid": id, "pincode": pincode});
+    if (response.statusCode == 200) {
+      getsavedstudent();
+      Get.snackbar("Hurray!", "Location updated",
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green);
+    } else {
+      Get.snackbar("Can't access your location", "Grant location permission",
+          snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     getuserdata().then((value) => getsavedstudent()).then((value) {
-      get_near_tutor();
+      get_near_tutor().then((value) => getCurrentPosition());
     });
     // getsavedstudent();
     // get_near_tutor();
