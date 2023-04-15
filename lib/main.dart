@@ -4,7 +4,6 @@ import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:tutor_match/login_signup_auth/screens/STUDENT%20SCREEN/student_home.dart';
 import 'package:tutor_match/login_signup_auth/screens/TUTOR%20SCREEN/tutor_home.dart';
 import 'package:tutor_match/login_signup_auth/screens/signup2/student_signup.dart';
-import 'package:tutor_match/login_signup_auth/screens/signup2/tutor_signup.dart';
 import 'package:tutor_match/utils/Sharedpref_serv.dart';
 
 void main() {
@@ -35,7 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
-        // home: OnbordingScreen(),
+        // home: Tutor_home(),
         home: FutureBuilder(
           future: checkusertype(),
           builder: (context, snapshot) {
@@ -46,6 +45,7 @@ class MyApp extends StatelessWidget {
                 return const Student_home();
               } else {
                 return const StudentSignup();
+                // return const TutorSignup();
               }
             } else {
               return const Scaffold(
